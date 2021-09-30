@@ -25,6 +25,10 @@ def main():
     expected_ns = args["nameserver"].replace(" ", "").split(",")
     expected_registrar = args["registrar"]
 
+    if expected_ns is None and expected_registrar is None:
+        print("UNKNOWN - Please use -r to give the expected registrar or -n to give the expected nameservers")
+        exit(3)
+
     w = whois.whois(host)
     registrar = None
     if "registrar" in w.keys():
@@ -38,13 +42,14 @@ def main():
         exit(3)
 
     # Check Registrars
-    if registrar is not None and registrar.upper() != expected_registrar.upper():
-        print("CRITICAL - Registrar was changed for %s, it doesn't meet the expectations: Expected %s, Actual: %s" % (host, expected_registrar, registrar))
-        exit(2)
+    if registrar is not None and expected_registrar is not None:
+        if registrar.upper() != expected_registrar.upper():
+            print("CRITICAL - Registrar was changed for %s, it doesn't meet the expectations: Expected %s, Actual: %s" % (host, expected_registrar, registrar))
+            exit(2)
 
     # Check Nameservers
     wrong_ns = []
-    if ns is not None:
+    if ns is not None and expected_ns is not None:
         for i in range(len(ns)):
             ns[i] = ns[i].upper()
         for nameserver in expected_ns:
