@@ -13,7 +13,7 @@ __version__ = 0.1
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Nagios Plugin to check whether whois returns the expected registrar or (and) the expected name servers")
-    parser.add_argument("-H", "--Host", type=str, required=True, help="Domain to check")
+    parser.add_argument("-H", "--Host", type=str, help="Domain to check")
     parser.add_argument("-n", "--nameserver", type=str, help="Expected nameservers")
     parser.add_argument("-r", "--registrar", type=str, help="Expected registrar")
     return parser.parse_args()
@@ -25,8 +25,12 @@ def main():
     expected_ns = args["nameserver"].replace(" ", "").split(",")
     expected_registrar = args["registrar"]
 
+    if host is None:
+        print("UNKNOWN - No host is given. Use -H <Host>")
+        exit(3)
+
     if expected_ns is None and expected_registrar is None:
-        print("UNKNOWN - Please use -r to give the expected registrar or -n to give the expected nameservers")
+        print("UNKNOWN - Please use -r to give the expected registrar or/and -n to give the expected nameservers")
         exit(3)
 
     w = whois.whois(host)
