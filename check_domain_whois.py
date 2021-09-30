@@ -26,13 +26,14 @@ def main():
     expected_registrar = args["registrar"]
 
     w = whois.whois(host)
-    print(w.keys())
     registrar = None
     if "registrar" in w.keys():
         registrar = w["registrar"]
     ns = None
     if "name_servers" in w.keys():
         ns = w["name_servers"]
+        for i in range(len(ns)):
+            ns[i] = ns[i].upper()
 
     if registrar is None and ns is None:
         print("UNKNOWN - whois did not deliver any nameservers or the registrar for %s" % host)
@@ -46,11 +47,11 @@ def main():
     # Check Nameservers
     wrong_ns = []
     if ns is not None:
-        for nameserver in ns:
-            if nameserver.upper() not in expected_ns:
+        for nameserver in expected_ns:
+            if nameserver.upper() not in ns:
                 wrong_ns.append(nameserver)
     if len(wrong_ns) != 0:
-        print("CRITICAL - Nameservers were changed for %s, they don't meet the expectations: Expected: %s, Actual: %s" % (host, wrong_ns, expected_ns))
+        print("CRITICAL - Nameservers were changed for %s, they don't meet the expectations: Expected: %s, Actual: %s" % (host, expected_ns, ns))
         exit(2)
 
     print("OK - The values for %s were like expected" % host)
