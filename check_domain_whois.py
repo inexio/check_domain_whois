@@ -32,8 +32,6 @@ def main():
     ns = None
     if "name_servers" in w.keys():
         ns = w["name_servers"]
-        for i in range(len(ns)):
-            ns[i] = ns[i].upper()
 
     if registrar is None and ns is None:
         print("UNKNOWN - whois did not deliver any nameservers or the registrar for %s" % host)
@@ -47,6 +45,8 @@ def main():
     # Check Nameservers
     wrong_ns = []
     if ns is not None:
+        for i in range(len(ns)):
+            ns[i] = ns[i].upper()
         for nameserver in expected_ns:
             if nameserver.upper() not in ns:
                 wrong_ns.append(nameserver)
