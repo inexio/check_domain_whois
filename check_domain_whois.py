@@ -51,6 +51,8 @@ def main():
     status = None
     if "status" in w.keys():
         status = w["status"]
+        if type(status) == str:
+            status = [status]
 
     if registrar is None and ns is None and status is None:
         print("UNKNOWN - whois did not deliver any information to check the expected values for %s" % host)
